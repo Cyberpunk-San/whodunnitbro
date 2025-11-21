@@ -683,7 +683,12 @@ def index():
 
 @app.route("/<path:path>")
 def static_files(path):
-    return send_from_directory(FRONTEND_DIR, path)
+    # serve frontend files ONLY if the path has no /api prefix
+    if not path.startswith("api"):
+        return send_from_directory(FRONTEND_DIR, path)
+    
+    return jsonify({"error": "API endpoint not found"}), 404
+
 
 if __name__ == '__main__':
     print("🚀 Starting WhoDunnit Detective Engine API...")
@@ -702,3 +707,4 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
 
     app.run(host="0.0.0.0", port=port)
+
