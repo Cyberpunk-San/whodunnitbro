@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: whodunnitbro
+    env: python
+    plan: free
+    buildCommand: |
+      echo "---- Installing Python dependencies ----"
+      pip install -r requirements.txt
+      
+      echo "---- Building C++ Engine (Python 3.12) ----"
+      cd backend/cpp_engine
+      mkdir -p build
+      cd build
+      cmake -DPython_EXECUTABLE=$(python3.12 -c "import sys; print(sys.executable)") ..
+      make -j4
+      echo "Engine build complete"
+
+    startCommand: |
+      python backend/python_api/app.py
+
+    envVars:
+      PYTHON_VERSION: 3.12.0
