@@ -1,7 +1,7 @@
 services:
   - type: web
     name: whodunnitbro
-    runtime: python3.11
+    runtime: python3.12
     env: python
     plan: free
 
