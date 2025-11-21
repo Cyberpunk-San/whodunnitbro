@@ -640,7 +640,11 @@ def health_check():
         "status": "healthy" if ENGINE_AVAILABLE else "unhealthy",
         "engine_available": ENGINE_AVAILABLE,
         "engine_initialized": engine_initialized,
-        "global_engine_exists": get_global_engine() is not None
+        try:
+            global_engine_exists = get_global_engine() is not None
+        except:
+            global_engine_exists = False
+
     }
     return jsonify(status)
 
@@ -707,4 +711,5 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
 
     app.run(host="0.0.0.0", port=port)
+
 
