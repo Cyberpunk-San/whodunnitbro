@@ -1,5 +1,5 @@
 
-const API_BASE = "https://whodunnitbro.onrender.com";
+const API_BASE = "https://whodunnitbro.onrender.com/api";
 
 
 // Global state
@@ -1742,5 +1742,6 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('caseUpdated');
     }
 });
+
 
 
