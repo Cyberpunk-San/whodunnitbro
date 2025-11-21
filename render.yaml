@@ -3,7 +3,6 @@ services:
     name: whodunnitbro
     env: python
     plan: free
-
     buildCommand: |
       echo "---- Installing Python dependencies ----"
       pip install -r requirements.txt
@@ -16,6 +15,5 @@ services:
       make -j4
 
       echo "---- Copying compiled engine (.so file) ----"
-      cp build/*.so ../../python_api/ || cp *.so ../../python_api/
-
+      cp *.so ../../python_api/ || true
     startCommand: python backend/python_api/app.py
