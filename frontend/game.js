@@ -18,7 +18,7 @@ const gameState = {
     raycastDistance: 16,
     showMiniMap: false,
     lastEnemyMoveTime: 0,
-    enemyMoveInterval: 2000, 
+    enemyMoveInterval: 500, 
     lastRandomMoveTime: 0,
     randomMoveInterval: 2000 
 };
@@ -1123,4 +1123,5 @@ function notifyMainApp() {
     
     // Also update localStorage to signal the main app
     localStorage.setItem('caseUpdated', Date.now().toString());
+
 }
