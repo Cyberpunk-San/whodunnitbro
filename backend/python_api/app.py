@@ -636,17 +636,18 @@ def setup_demo_data(engine):
 @app.route('/api/health')
 def health_check():
     """Health check endpoint"""
-    status = {
+    try:
+        engine_exists = get_global_engine() is not None if ENGINE_AVAILABLE else False
+    except:
+        engine_exists = False
+
+    return jsonify({
         "status": "healthy" if ENGINE_AVAILABLE else "unhealthy",
         "engine_available": ENGINE_AVAILABLE,
         "engine_initialized": engine_initialized,
-        try:
-            global_engine_exists = get_global_engine() is not None
-        except:
-            global_engine_exists = False
+        "global_engine_exists": engine_exists
+    })
 
-    }
-    return jsonify(status)
 
 # Reset endpoint for testing
 @app.route('/api/reset', methods=['POST'])
@@ -711,5 +712,6 @@ if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
 
     app.run(host="0.0.0.0", port=port)
+
 
 
