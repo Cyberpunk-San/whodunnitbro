@@ -280,7 +280,7 @@ async function loadCaseLocationData() {
 
         showLoading('Loading case data from Detective Engine...');
         
-        const response = await fetch(`http://localhost:5000/api/cases/${caseId}`);
+        const response = await fetch(``${API_BASE}/api/cases/${caseId}`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1085,7 +1085,7 @@ async function updateCaseStatus(status, gameDetails = {}) {
             notes: `Case completed in 3D game on ${new Date().toLocaleString()}. ${solutionText}`
         };
 
-        const response = await fetch(`http://localhost:5000/api/cases/${caseId}`, {
+        const response = await fetch(`${API_BASE}/api/cases/${caseId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1125,4 +1125,5 @@ function notifyMainApp() {
     localStorage.setItem('caseUpdated', Date.now().toString());
 
 }
+
 
