@@ -1,12 +1,11 @@
 services:
   - type: web
     name: whodunnitbro
-    runtime: python3.12
     env: python
     plan: free
 
     buildCommand: |
-      echo "---- Installing dependencies ----"
+      echo "---- Installing Python dependencies ----"
       pip install -r requirements.txt
 
       echo "---- Building C++ Engine ----"
@@ -16,7 +15,7 @@ services:
       cmake -DPython_EXECUTABLE=$(python3 -c "import sys; print(sys.executable)") ..
       make -j4
 
-      echo "---- Copying compiled engine ----"
-      cp whodunnit_engine.so ../../python_api/
+      echo "---- Copying compiled engine (.so file) ----"
+      cp build/*.so ../../python_api/ || cp *.so ../../python_api/
 
     startCommand: python backend/python_api/app.py
