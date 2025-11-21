@@ -1,5 +1,6 @@
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = "https://whodunnitbro.onrender.com";
+
 
 // Global state
 let currentData = {
@@ -1741,3 +1742,4 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('caseUpdated');
     }
 });
+
