@@ -47,7 +47,7 @@ function setupEventListeners() {
 // api Connection and Status
 async function testApiConnection() {
     try {
-        const response = await fetch(`${API_BASE}/health`);
+        const response = await fetch(`${API_BASE}/api/health`);
         const data = await response.json();
         
         const statusElement = document.getElementById('engineStatus');
@@ -1742,4 +1742,5 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('caseUpdated');
     }
 });
+
 
