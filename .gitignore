@@ -4,16 +4,18 @@
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
 
-# Ignore Python extension modules EXCEPT our built engine
+# Ignore all Python extension modules (pyd/so)
+*.pyd
 *.so
-!backend/python_api/*.so
-!backend/cpp_engine/build/*.so
+
+# BUT keep the Linux engine module used by backend
+!backend/python_api/whodunnit_engine.so
 
 # -----------------------------------
 # C++ / CMake build artifacts
 # -----------------------------------
+backend/cpp_engine/build/
 backend/cpp_engine/CMakeFiles/
 backend/cpp_engine/CMakeCache.txt
 backend/cpp_engine/cmake_install.cmake
@@ -21,8 +23,9 @@ backend/cpp_engine/Makefile
 backend/cpp_engine/*.o
 backend/cpp_engine/*.obj
 
-# Note: backend/cpp_engine/build/ directory itself is tracked
-# but we whitelist .so files inside it above
+# Ignore Windows engine files
+backend/cpp_engine/whodunnit_engine.pyd
+backend/cpp_engine/whodunnit_engine.so      # remove accidental duplicate
 
 # -----------------------------------
 # IDE / Editor settings
