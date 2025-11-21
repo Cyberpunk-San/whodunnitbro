@@ -124,7 +124,7 @@ function checkForLoadedCase() {
 
 async function fetchCaseDetails(caseId) {
     try {
-        const response = await fetch(`http://localhost:5000/api/cases/${caseId}`);
+        const response = await fetch(`${API_BASE}/api/cases`);
         if (response.ok) {
             const caseData = await response.json();
             document.getElementById('caseDetails').textContent = 
@@ -1125,3 +1125,4 @@ function notifyMainApp() {
     localStorage.setItem('caseUpdated', Date.now().toString());
 
 }
+
