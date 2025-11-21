@@ -16,4 +16,7 @@ services:
       cmake -DPython_EXECUTABLE=$(python3 -c "import sys; print(sys.executable)") ..
       make -j4
 
+      echo "---- Copying compiled engine ----"
+      cp whodunnit_engine.so ../../python_api/
+
     startCommand: python backend/python_api/app.py
