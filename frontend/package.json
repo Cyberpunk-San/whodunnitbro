@@ -1,0 +1,22 @@
+{
+  "name": "whodunnit-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for WhoDunnit Detective Engine",
+  "main": "server.py",
+  "scripts": {
+    "start": "python server.py",
+    "dev": "python server.py"
+  },
+  "keywords": [
+    "detective",
+    "crime",
+    "investigation",
+    "frontend"
+  ],
+  "author": "WhoDunnitBro Team",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.181.2",
+    "three.js": "^0.77.1"
+  }
+}

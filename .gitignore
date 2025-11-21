@@ -1,0 +1,53 @@
+# -----------------------------------
+# Python
+# -----------------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore all Python extension modules (pyd/so)
+*.pyd
+*.so
+
+# BUT keep the Linux engine module used by backend
+!backend/python_api/whodunnit_engine.so
+
+# -----------------------------------
+# C++ / CMake build artifacts
+# -----------------------------------
+backend/cpp_engine/build/
+backend/cpp_engine/CMakeFiles/
+backend/cpp_engine/CMakeCache.txt
+backend/cpp_engine/cmake_install.cmake
+backend/cpp_engine/Makefile
+backend/cpp_engine/*.o
+backend/cpp_engine/*.obj
+
+# Ignore Windows engine files
+backend/cpp_engine/whodunnit_engine.pyd
+backend/cpp_engine/whodunnit_engine.so      # remove accidental duplicate
+
+# -----------------------------------
+# IDE / Editor settings
+# -----------------------------------
+.vscode/
+.idea/
+*.code-workspace
+
+# Visual Studio project files
+*.sln
+*.vcxproj*
+*.filters
+
+# -----------------------------------
+# Node / Frontend
+# -----------------------------------
+node_modules/
+package-lock.json
+npm-debug.log
+
+# -----------------------------------
+# OS files
+# -----------------------------------
+.DS_Store
+Thumbs.db

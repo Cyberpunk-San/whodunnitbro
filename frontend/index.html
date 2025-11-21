@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhoDunnit Detective Engine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-search"></i> WhoDunnit Detective Engine
+            </span>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-plug"></i> Backend: Port 5000 | 
+                    <i class="fas fa-desktop"></i> Frontend: Port 8000
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4">Who Dunnit Bro!?</h1>
+            <p class="lead">Hmm...Seems like You are the culprit...Hahahaha...Catch me if you can</p>
+            <div class="mt-3">
+                <span class="badge bg-success me-2" id="engineStatus">Checking Engine Status...</span>
+                <span class="badge bg-info me-2" id="caseCount">Cases: --</span>
+                <span class="badge bg-warning me-2" id="suspectCount">Suspects: --</span>
+                <span class="badge bg-primary" id="characterCount">Characters: --</span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <label class="form-label text-light">Select Case to Play:</label>
+            <select id="playCaseSelect" class="form-select">
+                <option value="">-- Select a Case --</option>
+            </select>
+
+            <button class="btn btn-danger mt-2" onclick="startGame()">
+                🎮 Play Case in 3D
+            </button>
+        </div>
+    </div>
+
+    
+    <div class="container">
+        <!-- Main Navigation Tabs -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cases-tab" data-bs-toggle="tab" data-bs-target="#cases" type="button" role="tab">
+                    <i class="fas fa-folder"></i> Cases
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="suspects-tab" data-bs-toggle="tab" data-bs-target="#suspects" type="button" role="tab">
+                    <i class="fas fa-user-secret"></i> Suspects
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="characters-tab" data-bs-toggle="tab" data-bs-target="#characters" type="button" role="tab">
+                    <i class="fas fa-users"></i> Characters
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="relationships-tab" data-bs-toggle="tab" data-bs-target="#relationships" type="button" role="tab">
+                    <i class="fas fa-link"></i> Relationships
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="stories-tab" data-bs-toggle="tab" data-bs-target="#stories" type="button" role="tab">
+                    <i class="fas fa-book"></i> Story Generation
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="analysis-tab" data-bs-toggle="tab" data-bs-target="#analysis" type="button" role="tab">
+                    <i class="fas fa-chart-bar"></i> Analysis
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Contents -->
+        <div class="tab-content" id="mainTabsContent">
+            
+            <!-- Dashboard Tab -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-rocket"></i> Quick Actions
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button class="btn btn-success" onclick="setupDemoData()">
+                                        <i class="fas fa-magic"></i> Setup Demo Data
+                                    </button>
+                                    <button class="btn btn-primary" onclick="refreshAllData()">
+                                        <i class="fas fa-sync-alt"></i> Refresh All Data
+                                    </button>
+                                    <button class="btn btn-warning" onclick="testAllEndpoints()">
+                                        <i class="fas fa-vial"></i> Test All Endpoints
+                                    </button>
+                                    <button class="btn btn-info" onclick="generateOverviewReport()">
+                                        <i class="fas fa-chart-pie"></i> System Overview
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card stats-card">
+                            <div class="stats-number" id="statCases">--</div>
+                            <div>Total Cases</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card">
+                            <div class="stats-number" id="statSuspects">--</div>
+                            <div>Total Suspects</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card">
+                            <div class="stats-number" id="statCharacters">--</div>
+                            <div>Total Characters</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card">
+                            <div class="stats-number" id="statSolved">--</div>
+                            <div>Solved Cases</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-history"></i> Recent Activity
+                            </div>
+                            <div class="card-body">
+                                <div id="recentActivity">
+                                    No recent activity. Create some data to get started!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cases Tab -->
+            <div class="tab-pane fade" id="cases" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCaseModal">
+                            <i class="fas fa-plus"></i> Create New Case
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="loadCases()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-folder"></i> All Cases</span>
+                                <div class="search-box">
+                                    <input type="text" class="form-control form-control-sm" id="caseSearch" 
+                                           placeholder="Search cases..." onkeyup="searchCases()">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="casesList" class="row">
+                                    <!-- Cases will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suspects Tab -->
+            <div class="tab-pane fade" id="suspects" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSuspectModal">
+                            <i class="fas fa-plus"></i> Create New Suspect
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="loadSuspects()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-user-secret"></i> All Suspects</span>
+                                <div class="search-box">
+                                    <input type="text" class="form-control form-control-sm" id="suspectSearch" 
+                                           placeholder="Search suspects..." onkeyup="searchSuspects()">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="suspectsList" class="row">
+                                    <!-- Suspects will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Characters Tab -->
+            <div class="tab-pane fade" id="characters" role="tabpanel">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCharacterModal">
+                            <i class="fas fa-plus"></i> Create New Character
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="loadCharacters()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-users"></i> All Characters</span>
+                                <div class="search-box">
+                                    <input type="text" class="form-control form-control-sm" id="characterSearch" 
+                                            placeholder="Search characters..." onkeyup="searchCharacters()">
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="charactersList" class="row">
+                                    <!-- Characters will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relationships Tab -->
+            <div class="tab-pane fade" id="relationships" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-link"></i> Link Entities to Cases
+                            </div>
+                            <div class="card-body">
+                                <form id="linkForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Entity Type</label>
+                                        <select class="form-select" id="linkEntityType" required>
+                                            <option value="">Select type...</option>
+                                            <option value="suspect">Suspect</option>
+                                            <option value="character">Character</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Entity Name</label>
+                                        <select class="form-select" id="linkEntityName" required>
+                                            <option value="">Select entity...</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Case Title</label>
+                                        <select class="form-select" id="linkCaseTitle" required>
+                                            <option value="">Select case...</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-link"></i> Link Entities
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-unlink"></i> Unlink Entities from Cases
+                            </div>
+                            <div class="card-body">
+                                <form id="unlinkForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Entity Type</label>
+                                        <select class="form-select" id="unlinkEntityType" required>
+                                            <option value="">Select type...</option>
+                                            <option value="suspect">Suspect</option>
+                                            <option value="character">Character</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Entity Name</label>
+                                        <select class="form-select" id="unlinkEntityName" required>
+                                            <option value="">Select entity...</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Case Title</label>
+                                        <select class="form-select" id="unlinkCaseTitle" required>
+                                            <option value="">Select case...</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-unlink"></i> Unlink Entities
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story Generation Tab -->
+            <div class="tab-pane fade" id="stories" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-book"></i> Case Stories
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Case</label>
+                                    <select class="form-select" id="storyCaseSelect">
+                                        <option value="">Select a case...</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-outline-primary w-100 mb-2" onclick="generateCaseSummary()">
+                                    Generate Case Summary
+                                </button>
+                                <button class="btn btn-outline-primary w-100 mb-2" onclick="generateCaseAnalysis()">
+                                    Generate Case Analysis
+                                </button>
+                                <button class="btn btn-outline-primary w-100 mb-2" onclick="generateCaseTimeline()">
+                                    Generate Investigation Timeline
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <i class="fas fa-user"></i> Profile Stories
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Suspect</label>
+                                    <select class="form-select" id="storySuspectSelect">
+                                        <option value="">Select a suspect...</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-outline-info w-100 mb-2" onclick="generateSuspectProfile()">
+                                    Generate Suspect Profile
+                                </button>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Select Character</label>
+                                    <select class="form-select" id="storyCharacterSelect">
+                                        <option value="">Select a character...</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-outline-info w-100 mb-2" onclick="generateCharacterIntroduction()">
+                                    Generate Character Introduction
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-file-alt"></i> Generated Story</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearStoryOutput()">
+                                    <i class="fas fa-trash"></i> Clear
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="storyOutput" class="story-output">
+                                    Select a story generation option to see the output here.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <i class="fas fa-chart-line"></i> Investigation Stories
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-warning w-100 mb-2" onclick="generateSuspicionReport()">
+                                            Suspicion Report
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-warning w-100 mb-2" onclick="generateNextSteps()">
+                                            Next Investigation Steps
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-warning w-100 mb-2" onclick="generateMissingConnections()">
+                                            Missing Connections
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Tab -->
+            <div class="tab-pane fade" id="analysis" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-search"></i> Search Across All Data
+                            </div>
+                            <div class="card-body">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="searchQuery" placeholder="Enter search term...">
+                                    <button class="btn btn-primary" onclick="performSearch()">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                                <div id="searchResults"></div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie"></i> Case Analysis
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Case for Full Analysis</label>
+                                    <select class="form-select" id="analysisCaseSelect">
+                                        <option value="">Select a case...</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-info w-100" onclick="generateFullCaseAnalysis()">
+                                    Generate Comprehensive Analysis
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-tachometer-alt"></i> System Overview
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-success w-100 mb-3" onclick="generateSystemOverview()">
+                                    <i class="fas fa-sync-alt"></i> Refresh Overview
+                                </button>
+                                <div id="systemOverview">
+                                    Click refresh to load system overview
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2" id="loadingText">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Modals for Create Forms -->
+    <!-- Create Case Modal -->
+    <div class="modal fade" id="createCaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Case</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createCaseForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" name="status" required>
+                                        <option value="OPEN">Open</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="SOLVED">Solved</option>
+                                        <option value="COLD">Cold</option>
+                                        <option value="UNSOLVED">Unsolved</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" name="priority" required>
+                                        <option value="LOW">Low</option>
+                                        <option value="MEDIUM" selected>Medium</option>
+                                        <option value="HIGH">High</option>
+                                        <option value="URGENT">Urgent</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="createCase()">Create Case</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Suspect Modal -->
+    <div class="modal fade" id="createSuspectModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Suspect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createSuspectForm">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Age</label>
+                                    <input type="number" class="form-control" name="age">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Occupation</label>
+                                    <input type="text" class="form-control" name="occupation">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Background</label>
+                            <textarea class="form-control" name="background" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Story</label>
+                            <textarea class="form-control" name="story" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Motive</label>
+                            <input type="text" class="form-control" name="motive">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alibi</label>
+                            <textarea class="form-control" name="alibi" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="createSuspect()">Create Suspect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Character Modal -->
+    <div class="modal fade" id="createCharacterModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Character</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createCharacterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" name="role" required>
+                                <option value="WITNESS">Witness</option>
+                                <option value="INFORMANT">Informant</option>
+                                <option value="VICTIM">Victim</option>
+                                <option value="OFFICER">Officer</option>
+                                <option value="DETECTIVE">Detective</option>
+                                <option value="EXPERT">Expert</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Story/Description</label>
+                            <textarea class="form-control" name="story" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="createCharacter()">Create Character</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Case Modal -->
+    <div class="modal fade" id="editCaseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Case</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCaseForm">
+                        <input type="hidden" id="editCaseId">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editCaseTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="editCaseDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="editCaseStatus" required>
+                                        <option value="OPEN">Open</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="SOLVED">Solved</option>
+                                        <option value="COLD">Cold</option>
+                                        <option value="UNSOLVED">Unsolved</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" id="editCasePriority" required>
+                                        <option value="LOW">Low</option>
+                                        <option value="MEDIUM">Medium</option>
+                                        <option value="HIGH">High</option>
+                                        <option value="URGENT">Urgent</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" id="editCaseLocation">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="editCaseNotes" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Solution</label>
+                            <textarea class="form-control" id="editCaseSolution" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="updateCase()">Update Case</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Suspect Modal -->
+    <div class="modal fade" id="editSuspectModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Suspect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSuspectForm">
+                        <input type="hidden" id="editSuspectId">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editSuspectName" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Age</label>
+                                    <input type="number" class="form-control" id="editSuspectAge" min="0" max="120">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Occupation</label>
+                                    <input type="text" class="form-control" id="editSuspectOccupation">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Background</label>
+                            <textarea class="form-control" id="editSuspectBackground" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Story</label>
+                            <textarea class="form-control" id="editSuspectStory" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Motive</label>
+                            <input type="text" class="form-control" id="editSuspectMotive">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alibi</label>
+                            <textarea class="form-control" id="editSuspectAlibi" rows="2"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Alibi Strength</label>
+                                    <select class="form-select" id="editSuspectAlibiStrength">
+                                        <option value="NONE">None</option>
+                                        <option value="WEAK">Weak</option>
+                                        <option value="MODERATE">Moderate</option>
+                                        <option value="STRONG">Strong</option>
+                                        <option value="CONFIRMED">Confirmed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="editSuspectStatus">
+                                        <option value="UNINVESTIGATED">Uninvestigated</option>
+                                        <option value="UNDER_INVESTIGATION">Under Investigation</option>
+                                        <option value="CLEARED">Cleared</option>
+                                        <option value="PRIME_SUSPECT">Prime Suspect</option>
+                                        <option value="CONVICTED">Convicted</option>
+                                        <option value="ACQUITTED">Acquitted</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Suspicion Level (0-100)</label>
+                            <input type="number" class="form-control" id="editSuspectSuspicionLevel" min="0" max="100" step="1">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="updateSuspect()">Update Suspect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Character Modal -->
+    <div class="modal fade" id="editCharacterModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Character</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCharacterForm">
+                        <input type="hidden" id="editCharacterId">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editCharacterName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-select" id="editCharacterRole" required>
+                                <option value="WITNESS">Witness</option>
+                                <option value="INFORMANT">Informant</option>
+                                <option value="VICTIM">Victim</option>
+                                <option value="OFFICER">Officer</option>
+                                <option value="DETECTIVE">Detective</option>
+                                <option value="EXPERT">Expert</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Story/Description</label>
+                            <textarea class="form-control" id="editCharacterStory" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="updateCharacter()">Update Character</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- View Case Modal -->
+    <div class="modal fade" id="viewCaseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Case Details</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <h4 id="viewCaseTitle"></h4>
+            <p id="viewCaseDescription"></p>
+
+            <div class="row">
+            <div class="col-md-6">
+                <strong>Status:</strong> <span id="viewCaseStatus"></span>
+            </div>
+            <div class="col-md-6">
+                <strong>Priority:</strong> <span id="viewCasePriority"></span>
+            </div>
+            </div>
+
+            <hr>
+
+            <strong>Location:</strong> <span id="viewCaseLocation"></span><br>
+            <strong>Notes:</strong> <span id="viewCaseNotes"></span><br>
+            <strong>Solution:</strong> <span id="viewCaseSolution"></span><br>
+
+            <hr>
+
+            <h5>Linked Suspects</h5>
+            <ul id="viewCaseSuspects"></ul>
+
+            <h5>Linked Characters</h5>
+            <ul id="viewCaseCharacters"></ul>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
