@@ -633,7 +633,7 @@ def setup_demo_data(engine):
         return jsonify({"error": f"Failed to setup demo data: {str(e)}"}), 500
 
 # Health check
-@app.route('/health')
+@app.route('/api/health')
 def health_check():
     """Health check endpoint"""
     status = {
@@ -700,4 +700,5 @@ if __name__ == '__main__':
         print("❌ Detective engine not available - running in limited mode")
     
     port = int(os.environ.get("PORT", 5000))
+
     app.run(host="0.0.0.0", port=port)
