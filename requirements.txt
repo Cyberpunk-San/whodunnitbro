@@ -1,2 +1,14 @@
 flask
 flask-cors
+# First, try to use pure Python packages
+numpy
+pandas
+scikit-learn
+
+# If you need specific versions compatible with older GLIBC
+# Use manylinux wheels which are compatible with older systems
+--find-links https://wheel-index.linux-x86_64.org/
+
+# Or specify specific versions known to be compatible
+torch==1.8.0
+torchvision==0.9.0
